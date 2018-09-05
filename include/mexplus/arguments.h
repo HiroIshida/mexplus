@@ -365,8 +365,8 @@ std::vector<std::vector<Eigen::MatrixXd>> InputArguments::get(size_t index,
     int Nc = raw_data.cols();
     auto tmp = this->get<std::vector<double>>(index);
     auto mat_data = Eigen::Map<Eigen::MatrixXd>(&tmp[0], Nr, Nc);
-    int n1 = Nr/nx;
-    int n2 = Nc/ny;
+    int n1 = Nc/ny;
+    int n2 = Nr/nx;
 
     std::vector<std::vector<Eigen::MatrixXd>> data(
             n1,
@@ -407,8 +407,8 @@ std::vector<std::vector<Eigen::VectorXd>> InputArguments::get(size_t index,
     int Nc = raw_data.cols();
     auto tmp = this->get<std::vector<double>>(index);
     auto mat_data = Eigen::Map<Eigen::MatrixXd>(&tmp[0], Nr, Nc);
-    int n1 = Nr/nx;
-    int n2 = Nc/ny;
+    int n1 = Nc/ny;
+    int n2 = Nr/nx;
 
     std::vector<std::vector<Eigen::VectorXd>> data(
             n1,
