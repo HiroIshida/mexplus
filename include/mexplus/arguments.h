@@ -35,6 +35,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <Eigen/Core>
 #include "mexplus/mxarray.h"
 
 namespace mexplus {
@@ -171,6 +172,20 @@ class InputArguments {
   T get(size_t index) const;
   template <typename T>
   void get(size_t index, T* value) const;
+
+  // Hirokazu Ishida added
+  template<typename T>
+  T get(size_t index, int n1, int n2) const;
+
+  /*
+  template<typename T>
+  T get(size_t index, int n1, int n2, int n3) const;
+
+  template<typename T>
+  T get(size_t index, int n1, int n2, int n3, int n4) const;
+  */
+  // end Ishida
+
   /** Get a parsed optional argument.
    */
   const mxArray* get(const std::string& option_name) const {
@@ -193,6 +208,8 @@ class InputArguments {
   void get(const std::string& option_name,
            const T& default_value,
            T* value) const;
+
+
   /** Access raw mxArray* pointer.
    */
   const mxArray* operator[] (size_t index) const { return get(index); }
@@ -318,6 +335,37 @@ T InputArguments::get(size_t index) const {
   get<T>(index, &value);
   return value;
 }
+
+// Hirokazu Ishida added
+template<>
+Eigen::MatrixXd InputArguments::get(size_t index) const{
+    MxArray raw_data(this->get(index));
+    int Nr = raw_data.rows();
+    int Nc = raw_data.cols();
+    auto data = this->get<std::vector<double>>(index);
+    Eigen::MatrixXd Mdata = Eigen::Map<Eigen::MatrixXd>(&data[0], Nr, Nc);
+    return Mdata;
+}
+
+template<> 
+std::vector<Eigen::MatrixXd> InputArguments::get(size_t index,
+        int nx, int ny) const{
+    MxArray raw_data(this->get(index));
+    int Nr = raw_data.rows();
+    int Nc = raw_data.cols();
+    auto tmp = this->get<std::vector<double>>(index);
+    auto mat_data = Eigen::Map<Eigen::MatrixXd>(&tmp[0], Nr, Nc);
+    int n1 = Nr*Nc/(nx*ny);
+
+    std::vector<Eigen::MatrixXd> data(n1);
+    for(auto it=data.begin(); it!=data.end(); ++it){
+        int idx = it - data.begin();
+        *it = mat_data.block(nx*idx, 0, nx, ny);
+    }
+    return data;
+}
+
+//end Ishida
 
 template <typename T>
 void InputArguments::get(size_t index, T* value) const {
