@@ -7,6 +7,6 @@ path2 = ['-I' '/usr/include/eigen3'];
 mex('-v', Compilar, path1, path2, CXXFLAGS, 'Monster_.cc');
 m = Monster('hage');
 mat = [1, 2; 3, 4];
-vm = [mat;mat];
-m.set_vecmat(vm);
+mm = [mat, mat; mat, mat];
+m.set_matmat(mm);
 

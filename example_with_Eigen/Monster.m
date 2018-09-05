@@ -32,6 +32,10 @@ methods
   function [] = set_vecmat(obj, mm)
       Monster_('set_vecmat', obj.id, mm);
   end
+
+  function [] = set_matmat(obj, matmat)
+      Monster_('set_matmat', obj.id, matmat);
+  end
 end
 
 end

@@ -176,14 +176,6 @@ class InputArguments {
   // Hirokazu Ishida added
   template<typename T>
   T get(size_t index, int n1, int n2) const;
-
-  /*
-  template<typename T>
-  T get(size_t index, int n1, int n2, int n3) const;
-
-  template<typename T>
-  T get(size_t index, int n1, int n2, int n3, int n4) const;
-  */
   // end Ishida
 
   /** Get a parsed optional argument.
@@ -361,6 +353,30 @@ std::vector<Eigen::MatrixXd> InputArguments::get(size_t index,
     for(auto it=data.begin(); it!=data.end(); ++it){
         int idx = it - data.begin();
         *it = mat_data.block(nx*idx, 0, nx, ny);
+    }
+    return data;
+}
+
+template<> 
+std::vector<std::vector<Eigen::MatrixXd>> InputArguments::get(size_t index,
+        int nx, int ny) const{
+    MxArray raw_data(this->get(index));
+    int Nr = raw_data.rows();
+    int Nc = raw_data.cols();
+    auto tmp = this->get<std::vector<double>>(index);
+    auto mat_data = Eigen::Map<Eigen::MatrixXd>(&tmp[0], Nr, Nc);
+    int n1 = Nr/nx;
+    int n2 = Nc/ny;
+
+    std::vector<std::vector<Eigen::MatrixXd>> data(
+            n1,
+            std::vector<Eigen::MatrixXd>(n2)
+            );
+    for(auto it=data.begin(); it!=data.end(); ++it){
+        for(auto jt=it->begin(); jt!=it->end(); ++jt){
+            int idx = it - data.begin(), jdx = jt - it->begin();
+            *jt = mat_data.block(nx*idx, ny*jdx, nx, ny);
+        }
     }
     return data;
 }

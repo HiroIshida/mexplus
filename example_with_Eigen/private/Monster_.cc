@@ -74,10 +74,21 @@ public:
       }
   }
 
+  void set_matmat(matrix<MatrixXd> fuck_){
+      fuck = fuck_;
+      for(auto i=fuck.begin(); i!=fuck.end(); i++){
+          for(auto j=i->begin(); j!=i->end(); j++){
+              print(*j);
+              cout<<endl;
+          }
+      }
+  }
+
 private:
   double life;
   MatrixXd PTM;
   vector<MatrixXd> P__;
+  matrix<MatrixXd> fuck;
 
 };
 
@@ -137,6 +148,15 @@ MEX_DEFINE(set_vecmat) (int nlhs, mxArray* plhs[],
   Monster* monster = Session<Monster>::get(input.get(0));
   auto a = input.get<vector<MatrixXd>>(1, 2, 1);
   monster->set_vecmat(a);
+}
+
+MEX_DEFINE(set_matmat) (int nlhs, mxArray* plhs[],
+                   int nrhs, const mxArray* prhs[]) {
+  InputArguments input(nrhs, prhs, 2);
+  OutputArguments output(nlhs, plhs, 1);
+  Monster* monster = Session<Monster>::get(input.get(0));
+  auto fuck = input.get<matrix<MatrixXd>>(1, 1, 2);
+  monster->set_matmat(fuck);
 }
 
 } // namespace
