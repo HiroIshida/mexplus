@@ -8,5 +8,6 @@
 
 #include "mexplus/arguments.h"
 #include "mexplus/dispatch.h"
+#include "mexplus/workaround.h"
 
 #endif  // INCLUDE_MEXPLUS_H_
